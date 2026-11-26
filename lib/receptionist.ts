@@ -86,14 +86,14 @@ export async function* reply(messages: Anthropic.MessageParam[], from: Sender): 
       messages: convo,
     });
 
-    let wrote = false;
+    // Text is held until the round ends: if the round ends in a tool call, its text is dropped.
+    // Otherwise the model sometimes names times before checking the calendar and then corrects
+    // itself ("Wait, I need to correct that") in the same reply.
+    let held = "";
     let done = false;
     try {
       for await (const event of stream) {
-        if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-          yield event.delta.text;
-          sent = wrote = true;
-        }
+        if (event.type === "content_block_delta" && event.delta.type === "text_delta") held += event.delta.text;
       }
       done = true;
     } finally {
@@ -106,6 +106,10 @@ export async function* reply(messages: Anthropic.MessageParam[], from: Sender): 
       return;
     }
     if (final.stop_reason !== "tool_use") {
+      if (held.trim()) {
+        yield held;
+        sent = true;
+      }
       if (final.stop_reason === "max_tokens" && sent) yield "…";
       if (!sent) {
         console.error("[receptionist] no text in reply", final.stop_reason);
@@ -114,7 +118,6 @@ export async function* reply(messages: Anthropic.MessageParam[], from: Sender): 
       return;
     }
 
-    if (wrote) yield "\n\n";
     const calls = final.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
     convo.push({ role: "assistant", content: final.content });
     convo.push({ role: "user", content: await Promise.all(calls.map((c) => runTool(c, from))) });
