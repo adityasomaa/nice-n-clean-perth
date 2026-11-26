@@ -1,0 +1,107 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@theme {
+  /* Nice N Clean: the teal-to-blue of the NNC logo on fresh white, with deep navy text. Token names
+     are shared with the template: night/coal/steel are backgrounds, bone/ash the text on them,
+     gold the teal accent, gold-deep the blue used for text accents, brass the blue button. */
+  --color-night: #f6fbfc;
+  --color-coal: #eaf5f6;
+  --color-steel: #dcf2ef;
+  --color-bone: #0d1b2a;
+  --color-ash: #4f6070;
+  --color-rule: rgb(13 27 42 / 0.12);
+  --color-gold: #22c3b0;
+  --color-gold-deep: #1f6fd6;
+  --color-brass: #1f6fd6;
+
+  --color-ink: #0d1b2a;
+  --color-paper: #ffffff;
+  --color-cream: #f6fbfc;
+  --color-sand: #eaf5f6;
+  --color-butter: #dcf2ef;
+  --color-seal: #1f6fd6;
+  --color-muted: #4f6070;
+  --color-line: rgb(13 27 42 / 0.12);
+
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-tag: var(--font-dm-sans), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-poppins), ui-sans-serif, sans-serif;
+
+  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--color-night);
+  color: var(--color-bone);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-night);
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-night);
+}
+
+/* Native scrolling on touch / small screens keeps momentum feel */
+html:not(.lenis) {
+  scroll-behavior: auto;
+}
+
+/* Hide everything behind the curtain until the first open */
+html.is-loading body {
+  overflow: hidden;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+/* Headings in Cormorant Garamond, close to the roman GFP of the logo */
+/* Headings in Poppins: the geometric sans of the logo's "NICE N CLEAN" wordmark. */
+.heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 4.4vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #22c3b0, #2b6fe3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  font-family: var(--font-tag);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
